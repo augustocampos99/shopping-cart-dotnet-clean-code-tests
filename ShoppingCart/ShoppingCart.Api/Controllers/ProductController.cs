@@ -41,6 +41,18 @@ namespace ShoppingCart.Api.Controllers
             return Ok(result.Result);
         }
 
+        [HttpGet("{guid}")]
+        public async Task<IActionResult> GetByGuid(Guid guid)
+        {
+            var result = await _productService.GetByGuid(guid);
+            if(result.Success == false)
+            {
+                return NotFound();
+            }
+
+            return Ok(result.Result);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ProductRequest productRequest)
         {
@@ -67,6 +79,12 @@ namespace ShoppingCart.Api.Controllers
         {
             if (ModelState.IsValid)
             {
+                var resultProduct = await _productService.GetByGuid(guid);
+                if (resultProduct.Success == false)
+                {
+                    return NotFound();
+                }
+
                 var product = new Product
                 {
                     Guid = guid,
@@ -82,6 +100,18 @@ namespace ShoppingCart.Api.Controllers
 
 
             return BadRequest();
+        }
+
+        [HttpDelete("{guid}")]
+        public async Task<IActionResult> Detele(Guid guid)
+        {
+            var result = await _productService.Delete(guid);
+            if (result.Success == false)
+            {
+                return NotFound();
+            }
+
+            return Ok(result.Result);
         }
 
     }

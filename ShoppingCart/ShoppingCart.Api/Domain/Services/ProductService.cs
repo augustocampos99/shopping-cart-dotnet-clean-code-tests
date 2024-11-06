@@ -32,6 +32,11 @@ namespace ShoppingCart.Api.Domain.Services
             try
             {
                 var result = await _productRepository.GetByGuid(guid);
+                if (result == null)
+                {
+                    return new BaseResult<Product> { Success = false, Result = null, Message = "Not found" };
+                }
+
                 return new BaseResult<Product> { Success = true, Result = result, Message = "" };
             }
             catch (Exception)
@@ -63,6 +68,11 @@ namespace ShoppingCart.Api.Domain.Services
             {
                 var productResult = await _productRepository.GetByGuid(product.Guid);
 
+                if (productResult == null)
+                {
+                    return new BaseResult<Product> { Success = false, Result = null, Message = "Not found" };
+                }
+
                 productResult.Title = product.Title;
                 productResult.Description = product.Description;
                 productResult.Price = product.Price;
@@ -78,10 +88,16 @@ namespace ShoppingCart.Api.Domain.Services
             }
         }
 
-        public async Task<BaseResult<int>> Delete(Product product)
+        public async Task<BaseResult<int>> Delete(Guid guid)
         {
             try
             {
+                var product = await _productRepository.GetByGuid(guid);
+                if(product == null)
+                {
+                    return new BaseResult<int> { Success = false, Result = 0, Message = "Not found" };
+                }
+
                 var result = await _productRepository.Delete(product);
                 return new BaseResult<int> { Success = true, Result = result, Message = "" };
             }

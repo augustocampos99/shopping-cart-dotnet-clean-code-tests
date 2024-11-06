@@ -6,6 +6,6 @@ namespace ShoppingCart.Api.Domain.Interfaces.Services
     {
         Task<BaseResult<T>> Create(T entity);
         Task<BaseResult<T>> Update(T entity);
-        Task<BaseResult<int>> Delete(T entity);
+        Task<BaseResult<int>> Delete(Guid guid);
     }
 }
