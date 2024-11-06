@@ -2,12 +2,9 @@
 
 namespace ShoppingCart.Api.Domain.Interfaces.Services
 {
-    public interface IProductService
+    public interface IProductService : IBaseService<Product>
     {
-        Task<List<Product>> GetAllLimit(int limit, int skip);
-        Task<Product?> GetByGuid(Guid guid);
-        Task<Product> Create(Product post);
-        Task<Product> Update(Product post);
-        Task<int> Delete(Product post);
+        Task<BaseResult<List<Product>>> GetAllLimit(int limit, int skip);
+        Task<BaseResult<Product?>> GetByGuid(Guid guid);
     }
 }

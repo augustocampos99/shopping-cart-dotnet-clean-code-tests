@@ -1,6 +1,7 @@
 ﻿using ShoppingCart.Api.Domain.Entities;
 using ShoppingCart.Api.Domain.Interfaces.Repositories;
 using ShoppingCart.Api.Domain.Interfaces.Services;
+using ShoppingCart.Api.Dtos;
 
 namespace ShoppingCart.Api.Domain.Services
 {
@@ -13,12 +14,12 @@ namespace ShoppingCart.Api.Domain.Services
             _productRepository = productRepository;
         }
 
-        public async Task<List<Product>> GetAllLimit(int limit, int skip)
+        public async Task<BaseResult<List<Product>>> GetAllLimit(int limit, int skip)
         {
             try
             {
                 var result = await _productRepository.GetAllLimit(limit, skip);
-                return result.ToList();
+                return new BaseResult<List<Product>> { Success = true, Result = result.ToList(), Message = "" };
             }
             catch (Exception)
             {
@@ -26,12 +27,12 @@ namespace ShoppingCart.Api.Domain.Services
             }
         }
 
-        public async Task<Product> GetByGuid(Guid guid)
+        public async Task<BaseResult<Product>> GetByGuid(Guid guid)
         {
             try
             {
                 var result = await _productRepository.GetByGuid(guid);
-                return result;
+                return new BaseResult<Product> { Success = true, Result = result, Message = "" };
             }
             catch (Exception)
             {
@@ -39,7 +40,24 @@ namespace ShoppingCart.Api.Domain.Services
             }
         }
 
-        public async Task<Product> Update(Product product)
+        public async Task<BaseResult<Product>> Create(Product product)
+        {
+            try
+            {
+                product.Guid = Guid.NewGuid();
+                product.CreatedAt = DateTime.Now;
+                product.UpdatedAt = DateTime.Now;
+
+                var result = await _productRepository.Create(product);
+                return new BaseResult<Product> { Success = true, Result = result, Message = "" };
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<BaseResult<Product>> Update(Product product)
         {
             try
             {
@@ -48,10 +66,11 @@ namespace ShoppingCart.Api.Domain.Services
                 productResult.Title = product.Title;
                 productResult.Description = product.Description;
                 productResult.Price = product.Price;
+                productResult.UpdatedAt = DateTime.Now;
 
                 var result = await _productRepository.Update(productResult);
 
-                return result;
+                return new BaseResult<Product> { Success = true, Result = result, Message = "" };
             }
             catch (Exception)
             {
@@ -59,27 +78,12 @@ namespace ShoppingCart.Api.Domain.Services
             }
         }
 
-        public async Task<Product> Create(Product product)
-        {
-            try
-            {
-                product.Guid = Guid.NewGuid();
-
-                var result = await _productRepository.Create(product);
-                return result;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public async Task<int> Delete(Product product)
+        public async Task<BaseResult<int>> Delete(Product product)
         {
             try
             {
                 var result = await _productRepository.Delete(product);
-                return result;
+                return new BaseResult<int> { Success = true, Result = result, Message = "" };
             }
             catch (Exception)
             {

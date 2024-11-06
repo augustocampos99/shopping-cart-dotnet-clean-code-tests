@@ -3,6 +3,7 @@ using ShoppingCart.Api.Dtos;
 using ShoppingCart.Api.Domain.Entities;
 using ShoppingCart.Api.Domain.Interfaces.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
+using ShoppingCart.Api.Domain.Services;
 
 namespace ShoppingCart.Api.Controllers
 {
@@ -29,7 +30,6 @@ namespace ShoppingCart.Api.Controllers
                 {
                     limit = Int32.Parse(Request.Query["limit"]);
                     skip = Int32.Parse(Request.Query["skip"]);
-
                 }
                 catch (Exception ex)
                 {
@@ -38,13 +38,13 @@ namespace ShoppingCart.Api.Controllers
             }
 
             var result = await _productService.GetAllLimit(limit, skip);
-            return Ok(result);
+            return Ok(result.Result);
         }
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ProductRequest productRequest)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 var product = new Product
                 {
@@ -55,11 +55,36 @@ namespace ShoppingCart.Api.Controllers
 
                 var result = await _productService.Create(product);
 
-                return Ok(result);
+                return Ok(result.Result);
             }
 
-            return BadRequest("Erros de validação");
+
+            return BadRequest();
+        }
+
+        [HttpPut("{guid}")]
+        public async Task<IActionResult> Update([FromBody] ProductRequest productRequest, Guid guid)
+        {
+            if (ModelState.IsValid)
+            {
+                var product = new Product
+                {
+                    Guid = guid,
+                    Title = productRequest.Title,
+                    Description = productRequest.Description,
+                    Price = productRequest.Price
+                };
+
+                var result = await _productService.Update(product);
+
+                return Ok(result.Result);
+            }
+
+
+            return BadRequest();
         }
 
     }
 }
+
+

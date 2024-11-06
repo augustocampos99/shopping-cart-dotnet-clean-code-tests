@@ -13,25 +13,26 @@ namespace ShoppingCart.Api.Infrastructure.Repositories
         public BaseRepository(MySQLContext context)
         {
             _DbSet = context.Set<T>();
+            _DBContext = context;
         }
 
-        public async Task<T> Create(T product)
+        public async Task<T> Create(T entity)
         {
-            _DbSet.Add(product);
+            _DbSet.Add(entity);
             await _DBContext.SaveChangesAsync();
-            return product;
+            return entity;
         }
 
-        public async Task<T> Update(T product)
+        public async Task<T> Update(T entity)
         {
-            _DbSet.Update(product);
+            _DbSet.Update(entity);
             await _DBContext.SaveChangesAsync();
-            return product;
+            return entity;
         }
 
-        public async Task<int> Delete(T product)
+        public async Task<int> Delete(T entity)
         {
-            _DbSet.Remove(product);
+            _DbSet.Remove(entity);
             return await _DBContext.SaveChangesAsync();
         }
     }
