@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ShoppingCart.Api.Contracts;
+using ShoppingCart.Api.Dtos;
 using ShoppingCart.Api.Domain.Entities;
 using ShoppingCart.Api.Domain.Interfaces.Services;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace ShoppingCart.Api.Controllers
 {
@@ -43,16 +44,21 @@ namespace ShoppingCart.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ProductRequest productRequest)
         {
-            var product = new Product
+            if(ModelState.IsValid)
             {
-                Title = productRequest.Title,
-                Description = productRequest.Description,
-                Price = productRequest.Price
-            };
+                var product = new Product
+                {
+                    Title = productRequest.Title,
+                    Description = productRequest.Description,
+                    Price = productRequest.Price
+                };
 
-            var result = await _productService.Create(product);
+                var result = await _productService.Create(product);
 
-            return Ok(result);
+                return Ok(result);
+            }
+
+            return BadRequest("Erros de validação");
         }
 
     }

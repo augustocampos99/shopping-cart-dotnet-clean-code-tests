@@ -14,8 +14,17 @@ namespace ShoppingCart.Api.Infrastructure.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.ApplyConfiguration(new CustomerMap());
+            modelBuilder.ApplyConfiguration(new OrderMap());
+            modelBuilder.ApplyConfiguration(new OrderProductMap());
             modelBuilder.ApplyConfiguration(new ProductMap());
         }
+
+        public DbSet<Customer> Customers { get; set; }
+
+        public DbSet<Order> Orders { get; set; }
+
+        public DbSet<OrderProduct> OrderProducts { get; set; }
 
         public DbSet<Product> Products { get; set; }
     }

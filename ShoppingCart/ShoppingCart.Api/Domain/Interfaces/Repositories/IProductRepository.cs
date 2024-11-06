@@ -2,12 +2,10 @@
 
 namespace ShoppingCart.Api.Domain.Interfaces.Repositories
 {
-    public interface IProductRepository
+    public interface IProductRepository : IBaseRepository<Product>
     {
         Task<IEnumerable<Product>> GetAllLimit(int limit, int skip);
-        Task<Product?> GetByGuid(Guid guid);
-        Task<Product> Create(Product post);
-        Task<Product> Update(Product post);
-        Task<int> Delete(Product post);
+        Task<Product> GetById(int id);
+        Task<Product> GetByGuid(Guid guid);
     }
 }

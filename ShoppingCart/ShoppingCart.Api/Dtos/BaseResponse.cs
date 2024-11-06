@@ -1,4 +1,4 @@
-﻿namespace ShoppingCart.Api.Contracts
+﻿namespace ShoppingCart.Api.Dtos
 {
     public class BaseResponse
     {

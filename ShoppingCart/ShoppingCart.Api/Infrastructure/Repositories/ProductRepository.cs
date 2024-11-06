@@ -5,14 +5,14 @@ using ShoppingCart.Api.Infrastructure.Context;
 
 namespace ShoppingCart.Api.Infrastructure.Repositories
 {
-    public class ProductRepository : IProductRepository
+    public class ProductRepository : BaseRepository<Product>, IProductRepository
     {
         private readonly MySQLContext _DBContext;
 
-        public ProductRepository(MySQLContext context)
+        public ProductRepository(MySQLContext context) : base(context)
         {
             _DBContext = context;
-        }
+        } 
 
         public async Task<IEnumerable<Product>> GetAllLimit(int limit, int skip)
         {
@@ -30,25 +30,13 @@ namespace ShoppingCart.Api.Infrastructure.Repositories
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<Product> Create(Product product)
+        public async Task<Product?> GetById(int id)
         {
-            _DBContext.Products.Add(product);
-            await _DBContext.SaveChangesAsync();
-            return product;
+            return await _DBContext.Products
+                .Where(e => e.Id == id)
+                .FirstOrDefaultAsync();
         }
 
-        public async Task<Product> Update(Product product)
-        {
-            _DBContext.Products.Update(product);
-            await _DBContext.SaveChangesAsync();
-            return product;
-        }
-
-        public async Task<int> Delete(Product product)
-        {
-            _DBContext.Products.Remove(product);
-            return await _DBContext.SaveChangesAsync();
-        }
 
     }
 
