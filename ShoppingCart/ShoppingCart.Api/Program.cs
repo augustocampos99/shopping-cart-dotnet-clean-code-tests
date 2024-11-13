@@ -21,9 +21,15 @@ builder.Services.AddDbContext<MySQLContext>(options =>
 
 // DI Repositories
 builder.Services.AddTransient<IProductRepository, ProductRepository>();
+builder.Services.AddTransient<ICustomerRepository, CustomerRepository>();
+builder.Services.AddTransient<IOrderRepository, OrderRepository>();
+builder.Services.AddTransient<IOrderProductRepository, OrderProductRepository>();
 
 // DI Services
 builder.Services.AddTransient<IProductService, ProductService>();
+builder.Services.AddTransient<ICustomerService, CustomerService>();
+builder.Services.AddTransient<IOrderService, OrderService>();
+builder.Services.AddTransient<IOrderProductService, OrderProductService>();
 
 var app = builder.Build();
 

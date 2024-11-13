@@ -8,7 +8,7 @@ namespace ShoppingCart.Api.Infrastructure.Mapping
     {
         public void Configure(EntityTypeBuilder<OrderProduct> builder)
         {
-            builder.ToTable("order_products");
+            builder.ToTable("orders_products");
             builder.HasKey(x => x.Id);
 
             builder.Property(e => e.Id).HasColumnName("id");
