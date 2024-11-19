@@ -68,6 +68,11 @@ namespace ShoppingCart.Api.Controllers
 
                 var result = await _orderOrderProductService.Create(orderOrderProduct);
 
+                if (result.Success == false)
+                {
+                    return BadRequest(result.Message);
+                }
+
                 return Ok(result.Result);
             }
 
@@ -96,6 +101,11 @@ namespace ShoppingCart.Api.Controllers
                 };
 
                 var result = await _orderOrderProductService.Update(orderOrderProduct);
+
+                if (result.Success == false)
+                {
+                    return BadRequest(result.Message);
+                }
 
                 return Ok(result.Result);
             }

@@ -8,10 +8,14 @@ namespace ShoppingCart.Api.Domain.Services
     public class OrderProductService : IOrderProductService
     {
         private readonly IOrderProductRepository _orderProductRepository;
+        private readonly IOrderRepository _orderRepository;
+        private readonly IProductRepository _productRepository;
 
-        public OrderProductService(IOrderProductRepository orderProductRepository)
+        public OrderProductService(IOrderProductRepository orderProductRepository, IOrderRepository orderRepository, IProductRepository productRepository)
         {
             _orderProductRepository = orderProductRepository;
+            _orderRepository = orderRepository;
+            _productRepository = productRepository;
         }
 
         public async Task<BaseResult<List<OrderProduct>>> GetAllLimit(int limit, int skip)
@@ -49,6 +53,12 @@ namespace ShoppingCart.Api.Domain.Services
         {
             try
             {
+                var verify = await this.VerifyOrderProduct(orderProduct);
+                if(!String.IsNullOrEmpty(verify))
+                {
+                    return new BaseResult<OrderProduct> { Success = false, Result = null, Message = verify };
+                }
+
                 orderProduct.Guid = Guid.NewGuid();
                 orderProduct.CreatedAt = DateTime.Now;
                 orderProduct.UpdatedAt = DateTime.Now;
@@ -71,6 +81,12 @@ namespace ShoppingCart.Api.Domain.Services
                 if (orderProductResult == null)
                 {
                     return new BaseResult<OrderProduct> { Success = false, Result = null, Message = "Not found" };
+                }
+
+                var verify = await this.VerifyOrderProduct(orderProduct);
+                if (!String.IsNullOrEmpty(verify))
+                {
+                    return new BaseResult<OrderProduct> { Success = false, Result = null, Message = verify };
                 }
 
                 orderProductResult.OrderId = orderProduct.OrderId;
@@ -106,6 +122,23 @@ namespace ShoppingCart.Api.Domain.Services
             {
                 throw;
             }
+        }
+
+        private async Task<string?> VerifyOrderProduct(OrderProduct orderProduct)
+        {
+            var order = await _orderRepository.GetById(orderProduct.OrderId);
+            if (order == null)
+            {
+                return "Order not found";
+            }
+
+            var product = await _productRepository.GetById(orderProduct.ProductId);
+            if (product == null)
+            {
+                return "Product not found";
+            }
+
+            return null;
         }
 
     }

@@ -2,16 +2,19 @@
 using ShoppingCart.Api.Domain.Interfaces.Repositories;
 using ShoppingCart.Api.Domain.Interfaces.Services;
 using ShoppingCart.Api.Dtos;
+using ShoppingCart.Api.Infrastructure.Repositories;
 
 namespace ShoppingCart.Api.Domain.Services
 {
     public class OrderService : IOrderService
     {
         private readonly IOrderRepository _orderRepository;
+        private readonly ICustomerRepository _customerRepository;
 
-        public OrderService(IOrderRepository orderRepository)
+        public OrderService(IOrderRepository orderRepository, ICustomerRepository customerRepository)
         {
             _orderRepository = orderRepository;
+            _customerRepository = customerRepository;
         }
 
         public async Task<BaseResult<List<Order>>> GetAllLimit(int limit, int skip)
@@ -49,6 +52,12 @@ namespace ShoppingCart.Api.Domain.Services
         {
             try
             {
+                var verify = await this.VerifyCustomer(order);
+                if (!String.IsNullOrEmpty(verify))
+                {
+                    return new BaseResult<Order> { Success = false, Result = null, Message = verify };
+                }
+
                 order.Guid = Guid.NewGuid();
                 order.CreatedAt = DateTime.Now;
                 order.UpdatedAt = DateTime.Now;
@@ -71,6 +80,12 @@ namespace ShoppingCart.Api.Domain.Services
                 if (orderResult == null)
                 {
                     return new BaseResult<Order> { Success = false, Result = null, Message = "Not found" };
+                }
+
+                var verify = await this.VerifyCustomer(order);
+                if (!String.IsNullOrEmpty(verify))
+                {
+                    return new BaseResult<Order> { Success = false, Result = null, Message = verify };
                 }
 
                 orderResult.CustomerId = order.CustomerId;
@@ -105,6 +120,17 @@ namespace ShoppingCart.Api.Domain.Services
             {
                 throw;
             }
+        }
+
+        private async Task<string?> VerifyCustomer(Order order)
+        {
+            var customer = await _customerRepository.GetById(order.CustomerId);
+            if (customer == null)
+            {
+                return "Customer not found";
+            }
+
+            return null;
         }
 
     }
