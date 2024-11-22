@@ -90,7 +90,7 @@ namespace ShoppingCart.Api.Domain.Services
                 }
 
                 orderProductResult.OrderId = orderProduct.OrderId;
-                orderProductResult.ProductId = orderProduct.Quantity;
+                orderProductResult.ProductId = orderProduct.ProductId;
                 orderProductResult.Quantity = orderProduct.Quantity;
                 orderProductResult.Price = orderProduct.Price;
                 orderProductResult.UpdatedAt = DateTime.Now;

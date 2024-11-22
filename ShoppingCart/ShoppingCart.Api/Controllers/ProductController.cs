@@ -4,6 +4,7 @@ using ShoppingCart.Api.Domain.Entities;
 using ShoppingCart.Api.Domain.Interfaces.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using ShoppingCart.Api.Domain.Services;
+using AutoMapper;
 
 namespace ShoppingCart.Api.Controllers
 {
@@ -12,10 +13,12 @@ namespace ShoppingCart.Api.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
+        private readonly IMapper _mapper;
 
-        public ProductController(IProductService productService)
+        public ProductController(IProductService productService, IMapper mapper)
         {
             _productService = productService;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -33,12 +36,14 @@ namespace ShoppingCart.Api.Controllers
                 }
                 catch (Exception ex)
                 {
-                    return BadRequest(new BaseResponse { Success = false, Message = "Invalid parameter!" });
+                    return BadRequest(new BaseResponse<List<Object>> { Success = false, Message = "Invalid parameter!" });
                 }
             }
 
             var result = await _productService.GetAllLimit(limit, skip);
-            return Ok(result.Result);
+
+            var response = _mapper.Map<List<ProductResponse>>(result.Result);
+            return Ok(new BaseResponse<List<ProductResponse>> { Success = true, Message = "", Response = response });
         }
 
         [HttpGet("{guid}")]
@@ -50,7 +55,8 @@ namespace ShoppingCart.Api.Controllers
                 return NotFound();
             }
 
-            return Ok(result.Result);
+            var response = _mapper.Map<ProductResponse>(result.Result);
+            return Ok(new BaseResponse<ProductResponse> { Success = true, Message = "", Response = response });
         }
 
         [HttpPost]
@@ -67,7 +73,8 @@ namespace ShoppingCart.Api.Controllers
 
                 var result = await _productService.Create(product);
 
-                return Ok(result.Result);
+                var response = _mapper.Map<ProductResponse>(result.Result);
+                return Ok(new BaseResponse<ProductResponse> { Success = true, Message = "", Response = response });
             }
 
 
@@ -95,7 +102,8 @@ namespace ShoppingCart.Api.Controllers
 
                 var result = await _productService.Update(product);
 
-                return Ok(result.Result);
+                var response = _mapper.Map<ProductResponse>(result.Result);
+                return Ok(new BaseResponse<ProductResponse> { Success = true, Message = "", Response = response });
             }
 
 
@@ -111,7 +119,7 @@ namespace ShoppingCart.Api.Controllers
                 return NotFound();
             }
 
-            return Ok(result.Result);
+            return Ok(new BaseResponse<int> { Success = true, Message = "", Response = result.Result });
         }
 
     }

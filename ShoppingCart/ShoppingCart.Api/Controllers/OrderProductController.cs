@@ -33,7 +33,7 @@ namespace ShoppingCart.Api.Controllers
                 }
                 catch (Exception ex)
                 {
-                    return BadRequest(new BaseResponse { Success = false, Message = "Invalid parameter!" });
+                    return BadRequest(new BaseResponse<Object> { Success = false, Message = "Invalid parameter!" });
                 }
             }
 

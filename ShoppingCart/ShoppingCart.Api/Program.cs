@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using ShoppingCart.Api.AutoMapper;
 using ShoppingCart.Api.Domain.Interfaces.Repositories;
 using ShoppingCart.Api.Domain.Interfaces.Services;
 using ShoppingCart.Api.Domain.Services;
@@ -30,6 +31,9 @@ builder.Services.AddTransient<IProductService, ProductService>();
 builder.Services.AddTransient<ICustomerService, CustomerService>();
 builder.Services.AddTransient<IOrderService, OrderService>();
 builder.Services.AddTransient<IOrderProductService, OrderProductService>();
+
+// Automapper
+builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
 var app = builder.Build();
 
